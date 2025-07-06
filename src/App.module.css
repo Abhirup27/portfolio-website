@@ -1159,7 +1159,7 @@ body {
   width: 40px;
   height: 40px;
   background: rgba(10, 10, 10, 0.5);
-  /*backdrop-filter: blur(10px);*/
+  backdrop-filter: blur(10px);
   /*border: 2px transparent var(--primary-color);*/
   /*border-radius: 50%;*/
   color: var(--primary-color);
@@ -1167,7 +1167,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1;
+  z-index: 2;
   padding-bottom: 5px;
 }
 
