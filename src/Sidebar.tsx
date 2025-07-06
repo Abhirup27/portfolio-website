@@ -31,7 +31,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             <div className={styles.sidebar}>
                 <div className={styles.systemInfo}>
                     <div className={styles.systemBox}>
-                        <div className={styles.systemTitle}>PORTFOLIO-TUI</div>
+                        <div className={styles.systemTitle}>PORTFOLIO-GUI</div>
                         <div className={styles.systemVersion}>v0.1</div>
                     </div>
                     <div className={styles.systemBox}>

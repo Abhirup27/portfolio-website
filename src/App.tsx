@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import styles from './App.module.css';
 import Sidebar from './Sidebar';
+import MobileSidebar from "./MobileSidebar.tsx";
 
 interface Project {
     id: string;
@@ -27,6 +28,8 @@ interface TechStackData {
 }
 
 function App() {
+    const [isMobile, setIsMobile] = useState(false);
+    const [isLandscape, setIsLandscape] = useState(false);
     const [expandedProject, setExpandedProject] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [headerText, setHeaderText] = useState('');
@@ -35,7 +38,15 @@ function App() {
     const [fontSize, setFontSize] = useState(16); // Base font size in pixels
     const [showTechStack, setShowTechStack] = useState(false);
     const headerRef = useRef<HTMLHeadingElement>(null);
+    const colors = ['#00ff88', '#ffd700', '#ff1464', '#00bfff', '#8a2be2'];
+    const [colorIndex, setColorIndex] = useState(0);
 
+
+    const cycleColor = () => {
+        const nextIndex = (colorIndex + 1) % colors.length;
+        setColorIndex(nextIndex);
+        setPrimaryColor(colors[nextIndex]);
+    };
     const projects: Project[] = [
         {
             id: '1',
@@ -132,30 +143,77 @@ function App() {
         setFontSize(prev => Math.max(12, prev - 1));
     };
 
-    const handleLinkClick = (url: string) => {
-        window.open(url, '_blank', 'noopener,noreferrer');
+    const handleProjectTouch = (id: string, event: React.TouchEvent) => {
+        // Prevent double-tap zoom on mobile
+       // event.preventDefault();
+        handleProjectClick(id);
     };
+
+    // 6. Improved link handling for mobile
+    const handleLinkClick = (url: string, event?: React.MouseEvent | React.TouchEvent) => {
+        if (event) {
+            event.stopPropagation();
+        }
+
+        // Better mobile handling
+        if (isMobile) {
+            // Use location.href for better mobile compatibility
+            window.location.href = url;
+        } else {
+            window.open(url, '_blank', 'noopener,noreferrer');
+        }
+    };
+
+    useEffect(() => {
+        const checkMobile = () => {
+            const mobile = window.innerWidth <= 768;
+            const landscape = window.innerHeight < window.innerWidth;
+            setIsMobile(mobile);
+            setIsLandscape(landscape);
+
+            // Adjust sidebar visibility based on screen size
+            if (mobile) {
+                setIsSidebarVisible(false);
+            } else {
+                setIsSidebarVisible(true);
+            }
+        };
+
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        window.addEventListener('orientationchange', () => {
+            setTimeout(checkMobile, 100); // Delay to ensure dimensions are updated
+        });
+
+        return () => {
+            window.removeEventListener('resize', checkMobile);
+            window.removeEventListener('orientationchange', checkMobile);
+        };
+    }, []);
 
     useEffect(() => {
         const originalText = 'Abhirup Bhattacharyya';
         let i = 0;
 
+        // Faster typing on mobile for better UX
+        const typingSpeed = isMobile ? 50 : 100;
+
         const typeWriter = () => {
             if (i < originalText.length) {
                 setHeaderText(originalText.substring(0, i + 1));
                 i++;
-                setTimeout(typeWriter, 100);
+                setTimeout(typeWriter, typingSpeed);
             }
         };
 
         const timer = setTimeout(typeWriter, 500);
         return () => clearTimeout(timer);
-    }, []);
-
+    }, [isMobile]);
     // Set base font size for the document
     useEffect(() => {
-        document.documentElement.style.fontSize = `${fontSize}px`;
-    }, [fontSize]);
+        const baseFontSize = isMobile ? 14 : 16;
+        document.documentElement.style.fontSize = `${Math.max(baseFontSize, fontSize)}px`;
+    }, [fontSize, isMobile]);
 
     // Hide sidebar on mobile by default
     useEffect(() => {
@@ -221,18 +279,159 @@ function App() {
             </div>
         </div>
     );
+    const renderProjectItem = (project) => (
+        <div
+            key={project.id}
+            className={`${styles.projectItem} ${expandedProject === project.id ? styles.expanded : ''}`}
+            onClick={() => handleProjectClick(project.id)}
+            //onTouchStart={(e) => handleProjectTouch(project.id, e)}
+            // Add mobile-specific attributes
+            role="button"
+            tabIndex={0}
+            aria-expanded={expandedProject === project.id}
+        >
+            <div className={styles.projectInfo}>
+                <span className={styles.projectName}>
+                    {project.name}
+                </span>
+                <span className={`${styles.projectStatus} ${styles['status-' + project.status]}`}>
+                    {project.status === 'completed' && 'Completed'}
+                    {project.status === 'planning' && 'Planning'}
+                    {project.status === 'progress' && 'In Progress'}
+                </span>
+            </div>
 
+            <div className={styles.projectActions}>
+                {/* GitHub Link */}
+                {project.githubUrl && (
+                    <button
+                        className={styles.actionBtn}
+                        onClick={(e) => handleLinkClick(project.githubUrl, e)}
+                        onTouchStart={(e) => e.stopPropagation()}
+                        title="View on GitHub"
+                        aria-label="View on GitHub"
+                    >
+                        <GitHubIcon />
+                    </button>
+                )}
+
+                {/* Deployment buttons with improved mobile handling */}
+                {project.deploymentType === 'vercel' && project.liveUrl && (
+                    <button
+                        className={styles.actionBtn}
+                        onClick={(e) => handleLinkClick(project.liveUrl, e)}
+                        onTouchStart={(e) => e.stopPropagation()}
+                        title="View Live Site"
+                        aria-label="View Live Site"
+                    >
+                        <VercelIcon />
+                    </button>
+                )}
+
+                {project.deploymentType === 'chrome-extension' && project.chromeStoreUrl && (
+                    <button
+                        className={styles.actionBtn}
+                        onClick={(e) => handleLinkClick(project.chromeStoreUrl, e)}
+                        onTouchStart={(e) => e.stopPropagation()}
+                        title="View in Chrome Store"
+                        aria-label="View in Chrome Store"
+                    >
+                        <ChromeExtensionIcon />
+                    </button>
+                )}
+            </div>
+
+            {/* Mobile-optimized expanded content */}
+            {expandedProject === project.id && project.description && (
+                <div className={styles.projectDescription}>
+                    <p>{project.description}</p>
+                    <div className={styles.projectTags}>
+                        {project.tags?.map((tag, index) => (
+                            <span key={index} className={styles.tag}>
+                                {tag}
+                            </span>
+                        ))}
+                    </div>
+                    <div className={styles.projectLinks}>
+                        {project.deploymentType === 'vercel' && project.liveUrl && (
+                            <button
+                                className={styles.deploymentButton}
+                                onClick={(e) => handleLinkClick(project.liveUrl, e)}
+                                onTouchStart={(e) => e.stopPropagation()}
+                            >
+                                🚀 Deployed on Vercel
+                            </button>
+                        )}
+                        {project.deploymentType === 'chrome-extension' && project.chromeStoreUrl && (
+                            <button
+                                className={styles.deploymentButton}
+                                onClick={(e) => handleLinkClick(project.chromeStoreUrl, e)}
+                                onTouchStart={(e) => e.stopPropagation()}
+                            >
+                                🔌 View Chrome Extension
+                            </button>
+                        )}
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+
+    // 8. Add mobile-specific header description
+    const getHeaderDescription = () => {
+        if (isMobile) {
+            return (
+                <p>
+                    <span className={styles.highlight}>MCA graduate</span> with expertise in web development,
+                    networks, and operating systems. Passionate about building
+                    <span className={styles.highlight}> robust web applications</span> and solving
+                    complex technical challenges.
+                </p>
+            );
+        }
+        return (
+            <p>
+                Graduated with an <span className={styles.highlight}>MCA postgraduate degree</span>, with strong expertise in web application development, computer networks, and operating systems.
+                Experienced in building robust, user-friendly web applications through <span className={styles.highlight}>hands-on project development.</span>
+                Passionate about leveraging technical knowledge to solve complex challenges in web development and game development.
+                Previously contributed to an open-source community game project on GitHub.
+            </p>
+        );
+    };
+
+    const getMobileCSSVariables = () => {
+        const baseVariables = {
+            '--primary-color': primaryColor,
+            '--primary-color-rgb': hexToRgb(primaryColor),
+            '--primary-color-transparent': `${primaryColor}40`,
+            '--primary-color-darker': darkenColor(primaryColor, 20),
+            '--grid-color': `${primaryColor}15`,
+            '--glow-color': `${primaryColor}80`,
+        };
+
+        if (isMobile) {
+            return {
+                ...baseVariables,
+                '--mobile-padding': '0.5rem',
+                '--mobile-font-size': '0.9rem',
+                '--mobile-header-size': '1.8rem',
+            };
+        }
+
+        return baseVariables;
+    };
     return (
-        <div className={styles.container} style={cssVariables}>
+        <div className={styles.container} style={getMobileCSSVariables()}>
             {/* Sidebar or Toggle Button */}
-            {isSidebarVisible ? (
+            {isSidebarVisible ? !isMobile ? (
                 <Sidebar
                     onColorChange={handleColorChange}
                     onToggleSidebar={toggleSidebar}
                     onFontIncrease={increaseFontSize}
                     onFontDecrease={decreaseFontSize}
                 />
-            ) : (
+            ): <MobileSidebar activeChannel={'activeChannel'} onChannelClick={(channel: string)=> {}} onColorChange={cycleColor} onToggleNav={toggleSidebar} />
+                : !isMobile ? (
                 <button
                     className={styles.sidebarToggle}
                     onClick={toggleSidebar}
@@ -240,7 +439,15 @@ function App() {
                 >
                     ☰
                 </button>
-            )}
+            ) : (
+                    <button
+                        className={styles.mobileNavToggle}
+                        onClick={toggleSidebar}
+                        aria-label="Open sidebar"
+                    >
+                        ☰
+                    </button>
+                ) }
 
             {/* Background Effects */}
             <div className={styles.terminalBg}></div>
@@ -259,12 +466,7 @@ function App() {
 
                             <h1 ref={headerRef}>{headerText}</h1>
 
-                            <p>
-                                Graduated with an <span className={styles.highlight}>MCA postgraduate degree</span>, with strong expertise in web application development, computer networks, and operating systems.
-                                Experienced in building robust, user-friendly web applications through <span className={styles.highlight}>hands-on project development.</span>
-                                Passionate about leveraging technical knowledge to solve complex challenges in web development and game development.
-                                Previously contributed to an open-source community game project on GitHub.
-                            </p>
+                            {getHeaderDescription()}
 
                             <div className={styles.buttons}>
                                 <button className={styles.btn} onClick={toggleTechStack}>
@@ -320,122 +522,7 @@ function App() {
                             </div>
 
                             <div className={styles.projectGrid}>
-                                {filteredProjects.map((project) => (
-                                    <div
-                                        key={project.id}
-                                        className={`${styles.projectItem} ${expandedProject === project.id ? styles.expanded : ''}`}
-                                        onClick={() => handleProjectClick(project.id)}
-                                    >
-                                        <div className={styles.projectInfo}>
-                                            <span className={styles.projectName}>{project.name}</span>
-                                            <span className={`${styles.projectStatus} ${styles['status-' + project.status]}`}>
-                                                {project.status === 'completed' && 'Completed'}
-                                                {project.status === 'planning' && 'Planning'}
-                                                {project.status === 'progress' && 'In Progress'}
-                                            </span>
-                                        </div>
-                                        <div className={styles.projectActions}>
-                                            {/* GitHub Link - Always present */}
-                                            {project.githubUrl && (
-                                                <button
-                                                    className={styles.actionBtn}
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleLinkClick(project.githubUrl!);
-                                                    }}
-                                                    title="View on GitHub"
-                                                >
-                                                    <GitHubIcon />
-                                                </button>
-                                            )}
-
-                                            {/* Deployment Link - Vercel or Chrome Store */}
-                                            {project.deploymentType === 'vercel' && project.liveUrl && (
-                                                <button
-                                                    className={styles.actionBtn}
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleLinkClick(project.liveUrl!);
-                                                    }}
-                                                    title="View Live Site"
-                                                >
-                                                    <VercelIcon />
-                                                </button>
-                                            )}
-
-                                            {project.deploymentType === 'chrome-extension' && project.chromeStoreUrl && (
-                                                <button
-                                                    className={styles.actionBtn}
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleLinkClick(project.chromeStoreUrl!);
-                                                    }}
-                                                    title="View in Chrome Store"
-                                                >
-                                                    <ChromeExtensionIcon />
-                                                </button>
-                                            )}
-
-                                            {/* Placeholder for future deployment or in-development projects */}
-                                            {project.deploymentType === 'vercel' && !project.liveUrl && (
-                                                <button
-                                                    className={`${styles.actionBtn} ${styles.disabledBtn}`}
-                                                    title="Coming Soon"
-                                                >
-                                                    <VercelIcon />
-                                                </button>
-                                            )}
-
-                                            {project.deploymentType === 'chrome-extension' && !project.chromeStoreUrl && (
-                                                <button
-                                                    className={`${styles.actionBtn} ${styles.disabledBtn}`}
-                                                    title="Coming Soon"
-                                                >
-                                                    <ChromeExtensionIcon />
-                                                </button>
-                                            )}
-                                        </div>
-
-                                        {expandedProject === project.id && project.description && (
-                                            <div className={styles.projectDescription}>
-                                                <p>{project.description}</p>
-                                                <div className={styles.projectTags}>
-                                                    {project.tags?.map((tag, index) => (
-                                                        <span key={index} className={styles.tag}>
-                                                          {tag}
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                                <div className={styles.projectLinks}>
-                                                    {/* Make the deployment text a clickable button */}
-                                                    {project.deploymentType === 'vercel' && project.liveUrl && (
-                                                        <button
-                                                            className={styles.deploymentButton}
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                handleLinkClick(project.liveUrl!);
-                                                            }}
-                                                        >
-                                                            🚀 Deployed on Vercel
-                                                        </button>
-                                                    )}
-
-                                                    {project.deploymentType === 'chrome-extension' && project.chromeStoreUrl && (
-                                                        <button
-                                                            className={styles.deploymentButton}
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                handleLinkClick(project.chromeStoreUrl!);
-                                                            }}
-                                                        >
-                                                            🔌 View Chrome Extension
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                ))}
+                                {filteredProjects.map(value => renderProjectItem(value))}
                             </div>
                         </section>
                     </>
@@ -447,12 +534,7 @@ function App() {
                             </h1>
                             <h1 ref={headerRef}>{headerText}</h1>
 
-                            <p>
-                                Graduated with an <span className={styles.highlight}>MCA postgraduate degree</span>, with strong expertise in web application development, computer networks, and operating systems.
-                                Experienced in building robust, user-friendly web applications through <span className={styles.highlight}>hands-on project development.</span>
-                                Passionate about leveraging technical knowledge to solve complex challenges in web development and game development.
-                                Previously contributed to an open-source community game project on GitHub.
-                            </p>
+                            {getHeaderDescription()}
 
                             <div className={styles.buttons}>
                                 <button className={styles.btn} onClick={toggleTechStack}>

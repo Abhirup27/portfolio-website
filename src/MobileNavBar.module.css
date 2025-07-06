@@ -1,0 +1,65 @@
+.mobileNavBar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background: rgba(10, 10, 10, 0.95);
+    backdrop-filter: blur(10px);
+    border-top: 2px solid var(--primary-color);
+    z-index: 2000;
+    padding: 0 10px;
+}
+
+.navButton {
+    background: transparent;
+    border: none;
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.navButton.active {
+    background: var(--primary-color);
+    color: #0a0a0a;
+    box-shadow: 0 0 10px var(--primary-color);
+}
+
+.colorButton {
+    background: transparent;
+    border: none;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.colorDot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    box-shadow: 0 0 8px var(--primary-color);
+}
+
+.toggleButton {
+    background: transparent;
+    border: none;
+    color: var(--primary-color);
+    font-size: 2rem;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
