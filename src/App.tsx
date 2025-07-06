@@ -90,21 +90,21 @@ function App() {
         frontend: [
             { name: 'React', level: 'beginner', description: 'Building interactive UIs with hooks and state management' },
             { name: 'TypeScript', level: 'intermediate', description: 'Type-safe JavaScript development' },
-            { name: 'JavaScript', level: 'advanced', description: 'Modern ES6+ features and DOM manipulation' },
-            { name: 'HTML5', level: 'intermediate', description: 'Semantic markup and accessibility' },
-            { name: 'CSS3', level: 'intermediate', description: 'Flexbox, Grid, animations, and responsive design' },
-            { name: 'Tailwind CSS', level: 'beginner', description: 'Utility-first CSS framework' },
-            { name: 'Vite', level: 'beginner', description: 'Modern build tool and development server' },
+            { name: 'JavaScript', level: 'advanced', description: 'Modern ES6+ features like fetch API, then,catch and other microtasks and DOM manipulation' },
+            { name: 'HTML5', level: 'intermediate', description: 'Semantic markup' },
+            { name: 'CSS3', level: 'intermediate', description: 'Flexbox, Grid, and responsive design' },
+            { name: 'Tailwind CSS', level: 'beginner', description: 'CSS framework' },
+            { name: 'Vite', level: 'beginner', description: 'build tool and development server' },
         ],
         backend: [
-            { name: 'Node.js', level: 'intermediate', description: 'Server-side JavaScript runtime' },
-            { name: 'TypeScript', level: 'intermediate', description: 'Type-safe JavaScript development' },
-            { name: 'NestJS', level: 'intermediate', description: 'Progressive Node.js framework for scalable applications' },
-            { name: 'Express.js', level: 'intermediate', description: 'Fast, unopinionated web framework' },
-            { name: 'GraphQL', level: 'beginner', description: 'Query language for APIs' },
-            { name: 'REST APIs', level: 'intermediate', description: 'RESTful service architecture' },
-            { name: 'Redis', level: 'beginner', description: 'In-memory data structure store' },
-            { name: 'BullMQ', level: 'beginner', description: 'Queue management system' },
+            { name: 'Node.js', level: 'intermediate', description: 'I have good understanding of the event loop. task queue, micro task queue, asynchronous programming.' },
+            { name: 'TypeScript', level: 'intermediate', description: 'Type-safe JavaScript development, I know about creating new types, interfaces, type guards, mapped types, and compiler options' },
+            { name: 'NestJS', level: 'intermediate', description: 'I have the knowledge of the request lifecycle, MVC, Guards, middlewares , decorators, pipes, interceptors, providers, services, exception filters' },
+            { name: 'Express.js', level: 'intermediate', description: 'I have Knowledge of middlewares, router, and request handling' },
+            { name: 'GraphQL', level: 'beginner', description: 'I know how to write queries and mutations, use codegen to generate types, and use the Apollo Server' },
+            { name: 'REST APIs', level: 'intermediate', description: 'Know GET, POST, PUT, DELETE, PATCH HTTP methods. Know the differences between REST and GraphQL' },
+            { name: 'Redis', level: 'beginner', description: 'To cache data which is expected to be accessed frequently' },
+            { name: 'BullMQ', level: 'beginner', description: 'Queue management system which uses Redis as a backend. I have knowledge of the job lifecycle, and a little bit about the different types of queues, concurrency, and retries' },
         ],
         database: [
             { name: 'PostgreSQL', level: 'intermediate', description: 'Relational database management system' },
@@ -537,8 +537,8 @@ function App() {
                         </header>
 
                         <section className={styles.techStackContent}>
-                            {renderTechStackSection('Frontend', techStackData.frontend)}
                             {renderTechStackSection('Backend', techStackData.backend)}
+                            {renderTechStackSection('Frontend', techStackData.frontend)}
                             {renderTechStackSection('Database', techStackData.database)}
                         </section>
                     </div>
