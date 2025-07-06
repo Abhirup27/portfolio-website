@@ -1,0 +1,354 @@
+/* Sidebar.module.css */
+.sidebarContainer {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    bottom: 20px;
+    z-index: 1000;
+    border-radius: 15px;
+    padding: 5px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 2px solid var(--primary-color);
+    backdrop-filter: blur(5px);
+    transition: transform 0.3s ease;
+}
+
+.sidebar {
+    width: 200px;
+    height: 100%;
+    border-radius: 10px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+    background: rgba(10, 10, 10, 0.5);
+}
+
+.sidebar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+            linear-gradient(90deg, rgba(var(--primary-color-rgb), 0.1) 1px, transparent 1px),
+            linear-gradient(180deg, rgba(var(--primary-color-rgb), 0.1) 1px, transparent 1px);
+    background-size: 5px 5px;
+    z-index: -1;
+    animation: gridMove 30s linear infinite;
+}
+
+@keyframes gridMove {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(0px, 0px); }
+}
+
+.systemInfo {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.systemBox {
+    border: 2px solid var(--primary-color);
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    border-radius: 5px;
+    background: rgba(var(--primary-color-rgb), 0.05);
+}
+
+.systemTitle {
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin-bottom: 0.2rem;
+}
+
+.systemVersion {
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+.channelSection {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.sectionTitle {
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.8;
+    text-transform: uppercase;
+}
+
+.channelGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.channelBtn {
+    background: transparent;
+    border: 2px solid var(--primary-color);
+    color: inherit;
+    padding: 1rem 0.5rem;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    font-size: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.channelBtn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.channelBtn:hover::before {
+    left: 100%;
+}
+
+.channelBtn:hover {
+    background: rgba(var(--primary-color-rgb), 0.1);
+    box-shadow: 0 0 15px var(--primary-color);
+    transform: translateY(-2px);
+}
+
+.channelBtn.active {
+    background: var(--primary-color);
+    color: #0a0a0a;
+    box-shadow: 0 0 20px var(--primary-color);
+}
+
+.channelNumber {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.channelLabel {
+    font-size: 0.7rem;
+    opacity: 0.8;
+}
+
+.contactBtn {
+    grid-column: 1 / -1;
+    background: transparent;
+    border: 2px solid var(--primary-color);
+    color: inherit;
+    padding: 0.8rem;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    font-size: 0.9rem;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.contactBtn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.contactBtn:hover::before {
+    left: 100%;
+}
+
+.contactBtn:hover {
+    background: rgba(var(--primary-color-rgb), 0.1);
+    box-shadow: 0 0 15px var(--primary-color);
+    transform: translateY(-2px);
+}
+
+.bottomControls {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.colorAdjust {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.colorGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.3rem;
+}
+
+.colorBtn {
+    width: 30px;
+    height: 30px;
+    border: 2px solid;
+    border-color: currentColor;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    justify-self: center;
+}
+
+.colorBtn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px currentColor;
+}
+
+.colorBtn.active {
+    box-shadow: 0 0 15px currentColor;
+    transform: scale(1.2);
+}
+
+.colorYellow {
+    background: #ffd700;
+    color: #ffd700;
+}
+.colorRed {
+    background: #ff1464;
+    color: #ff1464;
+}
+.colorGreen {
+    background: #00ff88;
+    color: #00ff88;
+}
+.colorBlue {
+    background: #00bfff;
+    color: #00bfff;
+}
+.colorPurple {
+    background: #8a2be2;
+    color: #8a2be2;
+}
+
+.systemControls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.volumeControls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.3rem;
+}
+
+.volumeBtn {
+    background: transparent;
+    border: 1px solid var(--primary-color);
+    color: inherit;
+    padding: 0.5rem;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    font-size: 0.7rem;
+}
+
+.volumeBtn:hover {
+    background: rgba(var(--primary-color-rgb), 0.1);
+    box-shadow: 0 0 10px var(--primary-color);
+}
+
+.powerBtn {
+    background: transparent;
+    border: 2px solid var(--primary-color);
+    color: inherit;
+    padding: 0.8rem;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    position: relative;
+    overflow: hidden;
+
+}
+
+.powerBtn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.powerBtn:hover::before {
+    left: 100%;
+}
+
+.powerBtn:hover {
+    background: rgba(var(--primary-color-rgb), 0.1);
+    box-shadow: 0 0 15px var(--primary-color);
+}
+
+.powerIndicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    box-shadow: 0 0 10px var(--primary-color);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+@media (max-width: 768px) {
+    .sidebarContainer {
+        top: 10px;
+        left: 10px;
+        width: calc(100% - 20px);
+    }
+
+    .sidebar {
+        width: 100%;
+        padding: 0.5rem;
+    }
+
+    .channelBtn {
+        padding: 0.8rem 0.3rem;
+        font-size: 0.7rem;
+    }
+
+    .channelNumber {
+        font-size: 1rem;
+    }
+}
