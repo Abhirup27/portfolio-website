@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import {type CSSProperties, useEffect, useRef, useState} from 'react';
 import styles from './App.module.css';
 import Sidebar from './Sidebar';
 import MobileSidebar from "./MobileSidebar.tsx";
@@ -29,7 +29,6 @@ interface TechStackData {
 
 function App() {
     const [isMobile, setIsMobile] = useState(false);
-    const [isLandscape, setIsLandscape] = useState(false);
     const [expandedProject, setExpandedProject] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [headerText, setHeaderText] = useState('');
@@ -143,12 +142,6 @@ function App() {
         setFontSize(prev => Math.max(12, prev - 1));
     };
 
-    const handleProjectTouch = (id: string, event: React.TouchEvent) => {
-        // Prevent double-tap zoom on mobile
-       // event.preventDefault();
-        handleProjectClick(id);
-    };
-
     // 6. Improved link handling for mobile
     const handleLinkClick = (url: string, event?: React.MouseEvent | React.TouchEvent) => {
         if (event) {
@@ -167,9 +160,9 @@ function App() {
     useEffect(() => {
         const checkMobile = () => {
             const mobile = window.innerWidth <= 768;
-            const landscape = window.innerHeight < window.innerWidth;
+            //const landscape = window.innerHeight < window.innerWidth;
             setIsMobile(mobile);
-            setIsLandscape(landscape);
+           // setIsLandscape(landscape);
 
             // Adjust sidebar visibility based on screen size
             if (mobile) {
@@ -231,14 +224,14 @@ function App() {
     }, []);
 
     // Generate CSS variables based on primary color
-    const cssVariables = {
-        '--primary-color': primaryColor,
-        '--primary-color-rgb': hexToRgb(primaryColor),
-        '--primary-color-transparent': `${primaryColor}40`,
-        '--primary-color-darker': darkenColor(primaryColor, 20),
-        '--grid-color': `${primaryColor}15`,
-        '--glow-color': `${primaryColor}80`,
-    } as React.CSSProperties;
+    // const cssVariables = {
+    //     '--primary-color': primaryColor,
+    //     '--primary-color-rgb': hexToRgb(primaryColor),
+    //     '--primary-color-transparent': `${primaryColor}40`,
+    //     '--primary-color-darker': darkenColor(primaryColor, 20),
+    //     '--grid-color': `${primaryColor}15`,
+    //     '--glow-color': `${primaryColor}80`,
+    // } as React.CSSProperties;
 
     // Icon components
     const GitHubIcon = () => (
@@ -279,7 +272,7 @@ function App() {
             </div>
         </div>
     );
-    const renderProjectItem = (project) => (
+    const renderProjectItem = (project: Project) => (
         <div
             key={project.id}
             className={`${styles.projectItem} ${expandedProject === project.id ? styles.expanded : ''}`}
@@ -306,7 +299,7 @@ function App() {
                 {project.githubUrl && (
                     <button
                         className={styles.actionBtn}
-                        onClick={(e) => handleLinkClick(project.githubUrl, e)}
+                        onClick={(e) => handleLinkClick(project!.githubUrl!, e)}
                         onTouchStart={(e) => e.stopPropagation()}
                         title="View on GitHub"
                         aria-label="View on GitHub"
@@ -319,7 +312,7 @@ function App() {
                 {project.deploymentType === 'vercel' && project.liveUrl && (
                     <button
                         className={styles.actionBtn}
-                        onClick={(e) => handleLinkClick(project.liveUrl, e)}
+                        onClick={(e) => handleLinkClick(project.liveUrl!, e)}
                         onTouchStart={(e) => e.stopPropagation()}
                         title="View Live Site"
                         aria-label="View Live Site"
@@ -331,7 +324,7 @@ function App() {
                 {project.deploymentType === 'chrome-extension' && project.chromeStoreUrl && (
                     <button
                         className={styles.actionBtn}
-                        onClick={(e) => handleLinkClick(project.chromeStoreUrl, e)}
+                        onClick={(e) => handleLinkClick(project.chromeStoreUrl!, e)}
                         onTouchStart={(e) => e.stopPropagation()}
                         title="View in Chrome Store"
                         aria-label="View in Chrome Store"
@@ -356,7 +349,7 @@ function App() {
                         {project.deploymentType === 'vercel' && project.liveUrl && (
                             <button
                                 className={styles.deploymentButton}
-                                onClick={(e) => handleLinkClick(project.liveUrl, e)}
+                                onClick={(e) => handleLinkClick(project.liveUrl!, e)}
                                 onTouchStart={(e) => e.stopPropagation()}
                             >
                                 🚀 Deployed on Vercel
@@ -365,7 +358,7 @@ function App() {
                         {project.deploymentType === 'chrome-extension' && project.chromeStoreUrl && (
                             <button
                                 className={styles.deploymentButton}
-                                onClick={(e) => handleLinkClick(project.chromeStoreUrl, e)}
+                                onClick={(e) => handleLinkClick(project.chromeStoreUrl!, e)}
                                 onTouchStart={(e) => e.stopPropagation()}
                             >
                                 🔌 View Chrome Extension
@@ -415,10 +408,10 @@ function App() {
                 '--mobile-padding': '0.5rem',
                 '--mobile-font-size': '0.9rem',
                 '--mobile-header-size': '1.8rem',
-            };
+            } as CSSProperties;
         }
 
-        return baseVariables;
+        return baseVariables as CSSProperties;
     };
     return (
         <div className={styles.container} style={getMobileCSSVariables()}>
@@ -430,7 +423,7 @@ function App() {
                     onFontIncrease={increaseFontSize}
                     onFontDecrease={decreaseFontSize}
                 />
-            ): <MobileSidebar activeChannel={'activeChannel'} onChannelClick={(channel: string)=> {}} onColorChange={cycleColor} onToggleNav={toggleSidebar} />
+            ): <MobileSidebar activeChannel={'activeChannel'} onChannelClick={()=> {}} onColorChange={cycleColor} onToggleNav={toggleSidebar} />
                 : !isMobile ? (
                 <button
                     className={styles.sidebarToggle}
