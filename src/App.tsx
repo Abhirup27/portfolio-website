@@ -48,9 +48,9 @@ function App() {
         },
         {
             id: '2',
-            name: 'Pomodoro Timer',
+            name: 'Pomodoro Timer Chrome Extension',
             status: 'completed',
-            description: 'A productivity app made using React and TypeScript, deployed both as a chrome extension and a website',
+            description: 'A productivity app made using React and TypeScript, deployed as a chrome extension',
             tags: ['React','Vite', 'TypeScript', 'Chrome Extension', 'Vercel'],
             deploymentType: 'chrome-extension',
             githubUrl: 'https://github.com/Abhirup27/pomodoro-react-app',
